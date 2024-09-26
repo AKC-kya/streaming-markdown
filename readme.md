@@ -6,130 +6,50 @@
 
 ---
 
-## Installation
+## Description
 
-Install `streaming-markdown` package from npm.
+This project is a fork of the original streaming markdown project, with additional features to support tables and LaTeX rendering
 
-```bash
-npm install streaming-markdown
+## New Features
+
+1. **Table Parsing**: It can now parse tables in your streaming markdown.
+2. **LaTeX Parsing**: Mathematical expressions written in LaTeX with the delimiters: `\(...\)` , `$...\$`, `$$...\$$`, `\[...\]` with be placed in tag `<equation-block>` or `<equation_inline>` depending on the case. Also the single dollar sign `$` is not mistaken for a latex equation
+
+## Examples
+(with katex-extensions)
+
+
+### Tables
+
+It can parse tables like this:
+
+```
+| Header 1 | Header 2 |     |   Header 1 |  Header 2  |
+|----------|----------|     | ---------- | ---------- |
+| Cell 1   | Cell 2   | or  |    Cell 1  |  Cell 2    |
+| Cell 3   | Cell 4   |     |    Cell 3  |  Cell 4    |
 ```
 
-*Or just copy [**`smd.js`**](https://github.com/thetarnav/streaming-markdown/blob/main/smd.js) file to your project.*
+### LaTeX
 
-Or use the [CDN link](https://www.jsdelivr.com/package/npm/streaming-markdown).\
-It's a minified *(3kB Gzip)* version of the package, with only the necessary functions exported.\
-See the exports in [`smd_min_entry.js`](https://github.com/thetarnav/streaming-markdown/blob/main/smd_min_entry.js).\
-The package uses ES module exports, so you need to use `type="module"` in your script tag.
+It can parse equations like this 
 
-```html
-<script type="module">
-    import * as smd from "https://cdn.jsdelivr.net/npm/streaming-markdown/smd.min.js"
-    // ...
-</script>
 ```
+Inline equation: $a^2 + b^2 = c^2$ or \(a^2 + b^2 = c^2$\)
+becomes         <equation-inline>a^2 + b^2 = c^2<equation-inline>
 
-## Usage
-
-First create new markdown `Parser` by calling `parser` function.\
-It's single argument is a `Renderer` object, which is an interface to render the parsed markdown tokens to the DOM.\
-There are two built-in renderers—`default_renderer` and `logger_renderer`—that you can try at first.
-
-```js
-import * as smd from "streaming-markdown"
-
-const element  = document.getElementById("markdown")
-const renderer = smd.default_renderer(element)
-const parser   = smd.parser(renderer)
+Block equation:
+$ $                                                      \[
+\int_{0}^{\infty} e^{-x^2} dx = \frac{\sqrt{\pi}}{2} or \int_{0}^{\infty} e^{-x^2} dx = \frac{\sqrt{\pi}}{2}
+$ $                                                      \]
+becomes        <equation-block>\int_{0}^{\infty} e^{-x^2} dx = \frac{\sqrt{\pi}}{2}<equation-block>      
 ```
+### Issues Solved partially
+- Numbering of deeply listed items
+- Code Block not ending at the ``` delimiter due to the condition `pending_with_char.length ===
+	p.backticks_count + p.code_fence_body`
+- Insertion of `<br>` tag inside headings that doesn't work as intended
 
-### `write` function
+## Contributing
 
-Then, you can start streaming markdown to the `Parser` by calling `parser_write` function with the chunk of markdown string.
-
-```js
-smd.parser_write(parser, "# Streaming Markdown\n\n")
-```
-
-*You can write **as many times as you want** to stream the markdown.*
-
-The parser is optimistic.
-When it sees the start of an inline code block or code block,
-it will immediately style the element accordingly.
-
-E.g. `` `print("hello wor `` should be rendered as `<code>print("hello wor</code>`
-
-While the text is streamed in, the user should be able to select the text that has already been streamed in and copy it.
-*(The parser is only adding new elements to the DOM, not modifying the existing ones.)*
-
-### `end` function
-
-Finally, you can end the stream by calling `end` function.
-
-It will reset the `Parser` state and flush the remaining markdown.
-
-```js
-smd.parser_end(parser)
-```
-
-## Markdown features
-
-- [x] Paragraphs
-- [x] Line breaks
-    - [x] don't end tokens
-    - [x] Escaping line breaks
-- [x] Trim unnecessary spaces
-- [x] Headers
-    - [ ] ~~Alternate syntax~~ *(not planned)*
-- [x] Code Block with indent
-- [x] Code Block with triple backticks
-    - [x] language attr
-    - [x] with many backticks
-- [x] `` `inline code` `` with backticks
-    - [x] with many backticks
-    - [x] trim spaces ` code `
-- [x] *italic* with single asterisks
-- [x] **Bold** with double asterisks
-- [x] _italic_ with underscores
-- [x] __Bold__ with double underscores
-- [x] Special cases:
-    - [x] **bold*bold>em***
-    - [x] ***bold>em*bold**
-    - [x] *em**em>bold***
-    - [x] ***bold>em**em*
-- [x] \* or \_ cannot be surrounded by spaces
-- [x] Strikethrough ~~example~~
-- [x] Escape characters (e.g. \* or \_ with \\\* or \\\_)
-- [x] \[Link\](url)
-    - [x] `href` attr
-- [ ] Raw URLs
-    - [ ] http://example.com
-    - [ ] https://example.com
-    - [ ] www.example.com
-    - [ ] example@fake.com
-    - [ ] mailto:example@fake.com
-- [x] Autolinks
-    - [ ] www.example.com
-    - [x] http://example.com
-    - [x] https://example.com
-    - [ ] example@fake.com
-    - [ ] mailto:example@fake.com
-- [ ] Reference-style Links
-- [x] Images
-    - [x] `src` attr
-- [x] Horizontal rules
-    - [x] With `---`
-    - [x] With `***`
-    - [x] With `___`
-- [x] Unordered lists
-- [x] Ordered lists
-    - [x] `start` attr
-- [x] Task lists
-- [x] Nested lists
-- [ ] One-line nested lists
-- [ ] Adding Elements in Lists
-- [x] Blockquotes
-- [ ] Tables
-- [ ] Subscript
-- [ ] Superscript
-- [ ] Emoji Shortcodes
-- [ ] Html tags (e.g. `<div>`, `<span>`, `<a>`, `<img>`, etc.)
+Contributions are welcome! Feel free to open an issue or submit a pull request.
