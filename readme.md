@@ -19,6 +19,10 @@ This project is a fork of the original streaming markdown project, with addition
 (with katex-extensions)
 
 
+https://github.com/user-attachments/assets/fbfda0af-7438-4b75-8ed4-322756dcf013
+
+
+
 ### Tables
 
 It can parse tables like this:
